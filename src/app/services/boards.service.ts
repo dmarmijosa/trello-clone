@@ -9,19 +9,15 @@ import { Board } from '@models/board.model';
 @Injectable({
   providedIn: 'root',
 })
-export class MeService {
+export class BoardsService {
   apiUrl = environment.API_URL;
 
   constructor(private http: HttpClient) {}
 
-  getMeProfile() {
-    return this.http.get<User>(`${this.apiUrl}/api/v1/me/profile`, {
+  getBoards(id: Board['id']) {
+    return this.http.get<Board>(`${this.apiUrl}/api/v1/boards/${id}`, {
       context: checkToken(),
     });
   }
-   getMeBoards(){
-    return this.http.get<Board[]>(`${this.apiUrl}/api/v1/me/boards`, {
-      context: checkToken(),
-    });
-   }
+
 }
