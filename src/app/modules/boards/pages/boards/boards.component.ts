@@ -41,6 +41,7 @@ export class BoardsComponent implements OnInit {
     this.meService.getMeBoards().subscribe({
       next: (resp: Board[]) => {
         this.boardList = resp;
+        console.log(resp)
       },
     });
   }
