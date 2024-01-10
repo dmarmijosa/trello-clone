@@ -21,6 +21,8 @@ export class NavbarComponent {
 
   isOpenOverlayAvatar = false;
   isOpenOverlayBoards = false;
+  isOpenCreateBoards = false;
+
 
   user$ = this.authService.user$;
 
@@ -32,6 +34,10 @@ export class NavbarComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  close($event:boolean){
+    this.isOpenCreateBoards=$event;
   }
 
 }

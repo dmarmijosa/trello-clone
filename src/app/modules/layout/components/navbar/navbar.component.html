@@ -29,7 +29,17 @@
               <a routerLink="/app/users" class="block py-3 px-4 text-white">Users</a>
             </li>
             <li>
-              <app-btn typeBtn="button" color="sky">Create</app-btn>
+              <app-btn
+                typeBtn="button"
+                color="sky"
+                cdkOverlayOrigin
+                #createBoardOverlay="cdkOverlayOrigin"
+                (click)="isOpenCreateBoards = !isOpenCreateBoards">
+                <div class="flex space-x-2 text-left">
+                  <span>Create</span>
+                  <fa-icon [icon]="faAngleDown"></fa-icon>
+                </div>
+              </app-btn>
             </li>
           </ul>
         </div>
@@ -146,6 +156,30 @@
       </div>
       <div class="py-3 px-4 flex justify-between">Content</div>
     </div>
+  </ng-template>
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="createBoardOverlay"
+    [cdkConnectedOverlayOpen]="isOpenCreateBoards"
+    (overlayOutsideClick)="isOpenCreateBoards = !isOpenCreateBoards">
+    <div
+      class="z-50 my-4 w-60 text-base list-none bg-white rounded divide-y divide-gray-100 shadow"
+    >
+      <div class="py-2 px-4 text-center relative">
+        <span class="block text-normal text-gray-900">Create new Boards</span>
+        <button
+          (click)="isOpenCreateBoards = !isOpenCreateBoards"
+          class="block text-sm text-gray-900 absolute right-3 top-3"
+        >
+          <fa-icon [icon]="faClose"></fa-icon>
+        </button>
+      </div>
+      <div class="py-3 px-4 flex justify-between">
+        <app-board-form (closeOverlay)="close($event)" />
+      </div>
+    </div>
+
   </ng-template>
 
 </ng-container>
