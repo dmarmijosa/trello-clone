@@ -14,6 +14,8 @@ import { Card } from '@models/card.model';
 import {CardsService} from '@services/cards.service';
 import {List} from '@models/list.model';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ListsService} from '@services/lists.service';
+import {list} from 'postcss';
 
 @Component({
   selector: 'app-board',
@@ -34,13 +36,20 @@ export class BoardComponent implements OnInit {
   inputCard = new FormControl<string>('',{
     nonNullable:true,
     validators: [Validators.required]
-  })
+  });
+
+  inputList = new FormControl<string>('',{
+    nonNullable:true,
+    validators: [Validators.required]
+  });
+  showListForm=false;
 
 
   private dialog =  inject(Dialog);
   private router = inject(ActivatedRoute);
   private boardService= inject(BoardsService);
   private cardService = inject(CardsService);
+  private listService = inject(ListsService);
 
 
   ngOnInit(): void {
@@ -74,11 +83,22 @@ export class BoardComponent implements OnInit {
     this.updateCard(card,position,listId);
   }
 
-  addColumn() {
-    // this.columns.push({
-    //   title: 'New Column',
-    //   todos: [],
-    // });
+  addList() {
+    const title = this.inputList.value;
+    if(this.board){
+      this.listService.create({
+        title,
+        boardId:this.board.id,
+        position: this.boardService.getpositionNewItem(this.board.lists)
+      }).subscribe(list=>{
+        this.board?.lists.push({
+          ...list,
+          cards:[]
+        });
+        this.showListForm=true;
+        this.inputList.setValue('');
+      })
+    }
   }
 
   openDialog(card: Card) {
@@ -133,7 +153,7 @@ export class BoardComponent implements OnInit {
         title,
         listId:list.id,
         boardId: this.board.id,
-        position:this.boardService.getpositionNewCard(list.cards),
+        position:this.boardService.getpositionNewItem(list.cards),
       }).subscribe(card => {
         list.cards.push(card);
         this.inputCard.setValue('');
