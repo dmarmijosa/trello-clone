@@ -45,10 +45,18 @@ export class BoardsService {
       return (prePosition + nextPosition) / 2;
     }
     if (cards.length > 1 && currentIndex === lasIndex) {
-      const bottonPosition = cards[lasIndex].position;
+      const bottonPosition = cards[lasIndex-1].position;
       return bottonPosition + this.bufferSpace;
     }
 
     return 0;
+  }
+  getpositionNewCard(cards:Card[]){
+    if(cards.length===0){
+      return this.bufferSpace;
+    }
+    const lasIndex = cards.length - 1;
+    const bottonPosition = cards[lasIndex].position;
+    return bottonPosition + this.bufferSpace;
   }
 }

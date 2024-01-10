@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '@environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Card, UpdateCardDto} from '@models/card.model';
+import {Card, CreateCardDto, UpdateCardDto} from '@models/card.model';
 import {checkToken} from '@interceptors/token.interceptor';
 
 @Injectable({
@@ -17,5 +17,11 @@ export class CardsService {
     return this.http.put<Card>(`${this.apiUrl}/api/v1/cards/${id}`, changes,{
       context: checkToken()
     });
+  }
+
+  create(dto:CreateCardDto){
+    return this.http.post<Card>(`${this.apiUrl}/api/v1/cards`,dto,{
+      context:checkToken()
+    })
   }
 }

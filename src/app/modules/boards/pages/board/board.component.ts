@@ -12,6 +12,8 @@ import { BoardsService } from '@services/boards.service';
 import { Board } from '@models/board.model';
 import { Card } from '@models/card.model';
 import {CardsService} from '@services/cards.service';
+import {List} from '@models/list.model';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-board',
@@ -29,16 +31,17 @@ import {CardsService} from '@services/cards.service';
 })
 export class BoardComponent implements OnInit {
   board: Board | null = null;
+  inputCard = new FormControl<string>('',{
+    nonNullable:true,
+    validators: [Validators.required]
+  })
+
+
   private dialog =  inject(Dialog);
   private router = inject(ActivatedRoute);
   private boardService= inject(BoardsService);
   private cardService = inject(CardsService);
 
-  // constructor(
-  //   private dialog: Dialog,
-  //   private router: ActivatedRoute,
-  //   private boardService: BoardsService
-  // ) {}
 
   ngOnInit(): void {
     this.router.paramMap.subscribe((params) => {
@@ -103,5 +106,42 @@ export class BoardComponent implements OnInit {
     this.cardService.update(card.id, {position, listId}).subscribe((cardUpdate)=>{
       console.log(cardUpdate)
     })
+  }
+
+  openFormCard(list:List){
+    //list.showCardForm = !list.showCardForm
+    if(this.board?.lists){
+      this.board.lists = this.board.lists.map(integratorList => {
+        if(integratorList.id === list.id){
+          return {
+            ...integratorList,
+            showCardForm:true,
+          }
+        }else{
+          return {
+            ...integratorList,
+            showCardForm: false
+          }
+        }
+      })
+    }
+  }
+  createCard(list:List){
+    const title = this.inputCard.value;
+    if(this.board){
+      this.cardService.create({
+        title,
+        listId:list.id,
+        boardId: this.board.id,
+        position:this.boardService.getpositionNewCard(list.cards),
+      }).subscribe(card => {
+        list.cards.push(card);
+        this.inputCard.setValue('');
+        list.showCardForm=false;
+      })
+    }
+  }
+  closeCardForm(list:List){
+    list.showCardForm = false;
   }
 }
